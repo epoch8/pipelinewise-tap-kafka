@@ -1,3 +1,8 @@
+7.1.1+epoch8.1 (2022-10-30)
+---------------------------
+- Add `consumer_config` option to provide exra options to confluent-kafka client
+- Add compatibility with Meltano
+
 7.1.1 (2022-10-18)
 ------------------
 - Introducing the use of the `seek` method to reset the source partition offsets at the start of a run

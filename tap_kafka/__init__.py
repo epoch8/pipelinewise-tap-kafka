@@ -45,6 +45,9 @@ def do_discovery(config):
         'bootstrap.servers': config['bootstrap_servers'],
         'group.id': config['group_id'],
         'auto.offset.reset': 'earliest',
+
+        # User provided extra parameters
+        **sync._flatten_consumer_config(config.get("consumer_config", {})),
     })
 
     try:
@@ -115,6 +118,7 @@ def generate_config(args_config):
         'message_format': args_config.get('message_format', DEFAULT_MESSAGE_FORMAT),
         'proto_schema': args_config.get('proto_schema', DEFAULT_PROTO_SCHEMA),
         'proto_classes_dir': args_config.get('proto_classes_dir', DEFAULT_PROTO_CLASSES_DIR),
+        'consumer_config': args_config.get('consumer_config', {}),
     }
 
     validate_config(config)
@@ -131,6 +135,9 @@ def main_impl():
     elif args.properties:
         state = args.state or {}
         sync.do_sync(kafka_config, args.properties, state)
+    elif args.catalog:
+        state = args.state or {}
+        sync.do_sync(kafka_config, args.catalog.to_dict(), state)
     else:
         LOGGER.info("No properties were selected")
 

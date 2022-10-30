@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='pipelinewise-tap-kafka',
-      version='7.1.1',
+      version='7.1.1+epoch8.1',
       description='Singer.io tap for extracting data from Kafka topic - PipelineWise compatible',
       long_description=long_description,
       long_description_content_type='text/markdown',

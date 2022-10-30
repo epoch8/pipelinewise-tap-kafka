@@ -120,6 +120,16 @@ def error_callback(error: KafkaError):
         raise AllBrokersDownException('All kafka brokers are down')
 
 
+def _flatten_consumer_config(cfg):
+    def walk(parents, cfg):
+        if isinstance(cfg, dict):
+            for k,v in cfg.items():
+                yield from walk(parents + [k], v)
+        else:
+            yield (".".join(parents), cfg)
+
+    return dict(walk([], cfg))
+
 def init_kafka_consumer(kafka_config, state, value_deserializer):
     LOGGER.info('Initialising Kafka Consumer...')
     topic = kafka_config['topic']
@@ -139,6 +149,9 @@ def init_kafka_consumer(kafka_config, state, value_deserializer):
         'enable.auto.commit': False,
         'auto.offset.reset': initial_start_time_to_offset_reset(initial_start_time),
         'value.deserializer': value_deserializer,
+
+        # User provided extra parameters
+        **_flatten_consumer_config(kafka_config.get('consumer_config', {})),
     })
 
     consumer.subscribe([topic])
